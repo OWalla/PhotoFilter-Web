@@ -1,0 +1,50 @@
+body{
+  background: url("/static/images/background.jpg") no-repeat center center fixed;
+  background-size: 100% 100%;
+  margin:0;
+}
+
+.page-header{
+  margin: -20px;
+  padding: 20px 0 40px 0;
+  background: white;
+}
+.navbar .navbar-nav {
+    display: inline-block;
+    float: none;
+}
+
+.navbar .navbar-collapse, .navbar-inverse {
+    text-align: center;
+}
+
+.fixed-image-size{
+  width: 200px;
+  height: 200px;
+}
+
+.photoGallery {
+  background-color: rgba(255, 255, 255, 0.1);
+  border: 1px solid black;
+  border-radius: 5px;
+  padding: 20px 10px;
+  margin-bottom: 20px;
+}
+
+.thumbnail{
+
+    background-color: rgba(255, 255, 255, 0.4);
+}
+
+.albumClassification {
+  background-color: rgba(255, 255, 255, 0.4);
+  border-radius: 10px;
+  border: 1px solid black;
+}
+.albumClassification ul {
+  display: block;
+  box-sizing: border-box;
+  padding: 10px;
+  position: relative;
+  list-style-type: none;
+}

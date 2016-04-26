@@ -1,0 +1,7 @@
+<h2 style="text-align: center;">Please select your default image scoring preferences</h2>
+<div class="availableNetworks wrappable-block">
+  <figure ng-repeat="model in networks">
+    <a href=""><img ng-src="{{model.thumb_image}}" alt="{{model.name}}" style="width: 100%;"/></a><br/>
+    <strong>{{model.description}}<strong>
+  </figure>
+</div>
