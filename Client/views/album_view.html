@@ -1,17 +1,20 @@
 <div class="col-lg-12">
-  <h2>Viewsing album
+    <h2>Viewsing album
     {{ albumName }}
   </h2>
 </div>
 <div class="photoGallery col-lg-12 col-md-12 col-xs-12">
-  <div ng-repeat="(listName, list) in models.lists" class="col-lg-4 col-md-4 col-xs-4">
-    <strong class="{{getClass(listName) }}" style="font-size: 14pt"> {{listName}}</strong>
-    <div class="albumClassification">
-      <ul dnd-list="list">
-        <li ng-repeat="item in list" dnd-draggable="item" dnd-moved="list.splice($index, 1)" dnd-effect-allowed="move" dnd-selected="models.selected = item" ng-class="{'selected': models.selected === item}">
-          <img ng-src="{{item.src}}" alt="{{item.label}}" style="height: 40px;"/>
-        </li>
-      </ul>
+    <div ng-repeat="(listName, list) in models.lists" class="col-lg-4 col-md-4 col-xs-4">
+        <strong class="{{getClass(listName) }}" style="font-size: 14pt"> {{listName}}</strong>
+        <div class="albumClassification">
+            <ul dnd-list="list">
+                <li ng-repeat="item in list" dnd-draggable="item" dnd-moved="list.splice($index, 1)" dnd-effect-allowed="move" dnd-selected="models.selected = item" ng-class="{'selected': models.selected === item}">
+                    <img ng-src="{{item.src}}" alt="{{item.label}}" style="height: 40px;" />
+                </li>
+            </ul>
+        </div>
     </div>
-  </div>
+    <div class="col-lg-12 col-md-12 col-xs-12 text-center top-buffer">
+        <button class="btn btn-primary" type="submit" ng-click="sendUpdates()">Send updates!</button>
+    </div>
 </div>
