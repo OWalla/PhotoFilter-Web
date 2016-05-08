@@ -31,6 +31,10 @@ body{
   margin-bottom: 20px;
 }
 
+.top-buffer{
+  margin-top: 20px;
+}
+
 .thumbnail{
 
     background-color: rgba(255, 255, 255, 0.4);

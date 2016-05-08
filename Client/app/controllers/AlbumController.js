@@ -1,78 +1,88 @@
 // Code goes here
 
 (function() {
-  var app = angular.module("MainApp");
+    var app = angular.module("MainApp");
 
-  function AlbumController($scope, $http, $routeParams) {
+    function AlbumController($scope, $http, $routeParams) {
 
-    $scope.albumName = $routeParams.albumId;
+        $scope.albumId = $routeParams.albumId;
 
-    $scope.getClass = function(input) {
-      switch (input) {
-        case 'liked':
-          return 'glyphicon glyphicon-thumbs-up';
-          break;
-        case 'disliked':
-          return 'glyphicon glyphicon-thumbs-down';
-          break;
-        case 'default':
-          return 'glyphicon glyphicon-hourglass';
-          break;
-      }
-      return "";
-    };
-
-    app.filter("getClass", function() {
-      return function(input) {
-        switch (input) {
-          case 'liked':
-            return 'glyphicon glyphicon-thumbs-up';
-            break;
-          case 'disliked':
-            return 'glyphicon glyphicon-thumbs-down';
-            break;
-          case 'default':
-            return 'glyphicon glyphicon-hourglass';
-            break;
+        $scope.sendUpdates = function() {
+            $http.post('http://localhost:8080/sendUpdates', {
+                albumId: $scope.albumId,
+                classifications: $scope.models.lists
+            }).
+            success(function(data) {
+                alert("Send!");
+            });
         }
-        return "";
-      }
-    });
 
-    $scope.models = {
-      selected: null,
-      lists: {
-        "liked": [],
-        "disliked": [],
-        "default": []
-      }
-    };
+        $scope.getClass = function(input) {
+            switch (input) {
+                case 'liked':
+                    return 'glyphicon glyphicon-thumbs-up';
+                    break;
+                case 'disliked':
+                    return 'glyphicon glyphicon-thumbs-down';
+                    break;
+                case 'default':
+                    return 'glyphicon glyphicon-hourglass';
+                    break;
+            }
+            return "";
+        };
 
-    $http.get('http://localhost:8080/getAlbum/1').
-    success(function(data) {
+        app.filter("getClass", function() {
+            return function(input) {
+                switch (input) {
+                    case 'liked':
+                        return 'glyphicon glyphicon-thumbs-up';
+                        break;
+                    case 'disliked':
+                        return 'glyphicon glyphicon-thumbs-down';
+                        break;
+                    case 'default':
+                        return 'glyphicon glyphicon-hourglass';
+                        break;
+                }
+                return "";
+            }
+        });
 
-      for (index = 0; index < data.length; ++index) {
-        var photo = data[index];
+        $scope.models = {
+            selected: null,
+            lists: {
+                "liked": [],
+                "disliked": [],
+                "default": []
+            }
+        };
 
-        switch (photo.classification) {
-          case 'liked':
-            $scope.models.lists.liked.push(photo);
-            break;
+        $http.get('http://localhost:8080/getAlbum/1').
+        success(function(data) {
+            $scope.albumName = data.albumName
+            for (index = 0; index < data.photos.length; ++index) {
+                var photo = data.photos[index];
 
-          case 'disliked':
-            $scope.models.lists.disliked.push(photo);
-            break;
-          case 'default':
-            $scope.models.lists.default.push(photo);
-            break;
-          default:
-            alert('cyber');
-            break;
-        }
-      }
-    });
-  }
+                switch (photo.classification) {
+                    case 'liked':
+                        $scope.models.lists.liked.push(photo);
+                        break;
 
-  app.controller("AlbumController", ["$scope", "$http", '$routeParams', AlbumController]);
+                    case 'disliked':
+                        $scope.models.lists.disliked.push(photo);
+                        break;
+                    case 'default':
+                        $scope.models.lists.default.push(photo);
+                        break;
+                    default:
+                        alert('cyber');
+                        break;
+                }
+            }
+        });
+    }
+
+    app.controller("AlbumController", ["$scope", "$http", '$routeParams', AlbumController]);
 
 })();

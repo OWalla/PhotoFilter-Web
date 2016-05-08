@@ -1,13 +1,18 @@
 var express = require('express');
+var bodyParser = require("body-parser");
 var mongoose = require('mongoose');
 
 // Set up the app
 var app = express();
 
+// Enable POST request parsing
+app.use(bodyParser.urlencoded({ extended: false }));
+app.use(bodyParser.json());
+
 // Routings
 
 // Add headers
-app.use(function (req, res, next) {
+app.use(function(req, res, next) {
 
     // Website you wish to allow to connect
     res.setHeader('Access-Control-Allow-Origin', '*');
@@ -39,11 +44,9 @@ app.use('/', albums);
 
 //connect to our database
 //Ideally you will obtain DB details from a config file
-var dbName = 'messagesDB';
-var connectionString = 'mongodb://localhost:27017/' + dbName;
-mongoose.connect(connectionString);
+
 
 // Start the app
-app.listen(8080, function () {
-  console.log('Example app listening on port 8080!');
+app.listen(8080, function() {
+    console.log('Example app listening on port 8080!');
 });
