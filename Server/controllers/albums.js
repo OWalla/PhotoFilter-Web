@@ -128,9 +128,14 @@ router.get('/getAlbum/:album_id', function(req, res) {
 });
 
 router.post('/sendUpdates', function(req, res) {
+
     console.log(req.body);
     console.log(req.body.albumId);
     console.log(req.body.classifications);
+
+    // TODO: Update the album pictrues with the new classifications
+
+    // TODO: Call network train
 
     res.json("Cool!");
 })
