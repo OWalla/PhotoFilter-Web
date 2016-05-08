@@ -1,5 +1,9 @@
 var express = require('express');
+var multer = require('multer');
 var router = express.Router();
+var crypto = require('crypto');
+var mime = require('mime');
+var fs = require('fs');
 
 /* GET home page. */
 router.get('/getUserAlbums/:user_id', function(req, res) {
@@ -127,6 +131,39 @@ router.get('/getAlbum/:album_id', function(req, res) {
     });
 });
 
+var storage = multer.diskStorage({
+    destination: function(req, file, cb) {
+        var dir = './uploads/' + req.body.albumId;
+        console.log(dir);
+        var fs = require('fs');
+
+        if (!fs.existsSync(dir)) {
+            fs.mkdirSync(dir);
+        }
+        cb(null, dir)
+    },
+    filename: function(req, file, cb) {
+        crypto.pseudoRandomBytes(16, function(err, raw) {
+            cb(null, raw.toString('hex') + Date.now() + '.' + mime.extension(file.mimetype));
+        });
+    }
+});
+
+var uploading = multer({
+    storage: storage
+});
+
+router.post('/upload', uploading.any(), function(req, res) {
+    // At this point, all the images were uplaoded to /uploads/albumId
+    // TODO: We need to get all the images form that folder
+    // send each image id + path to our feature extraction
+    // and save it to the db.
+
+    // NO NEED TO TRAIN THE NETWORK, we need to estimate the score using the network.
+
+    res.json(req.body);
+});
+
 router.post('/sendUpdates', function(req, res) {
 
     console.log(req.body);
@@ -138,6 +175,6 @@ router.post('/sendUpdates', function(req, res) {
     // TODO: Call network train
 
     res.json("Cool!");
-})
+});
 
 module.exports = router;
