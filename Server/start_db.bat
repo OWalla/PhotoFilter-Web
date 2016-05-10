@@ -1,1 +1,1 @@
-start cmd /k mongod.exe --dbpath data
+start cmd /k C:\MongoDB\bin\mongod.exe --dbpath data
