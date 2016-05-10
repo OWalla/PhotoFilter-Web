@@ -1,16 +1,9 @@
-// var exports = module.exports = {};
+var convnetjs = require("convnetjs");
 
 function featuresToVolume(features) {
-    var x = new convnetjs.Vol(1, 1, 8, 0.0); // a 1x1x8 volume initialized to 0's.
-    x.w[0] = features.RedValue;
-    x.w[1] = features.GreenValue;
-    x.w[2] = features.BlueValue;
-    x.w[3] = features.Brightness;
-    x.w[4] = features.ColorBalance;
-    x.w[5] = features.SharpnessLevel;
-    x.w[6] = features.FacesInImageCount;
-    x.w[7] = features.AreFacesInImage;
-
+  console.log(features);
+    var x = new convnetjs.Vol([features.RedValue, features.GreenValue, features.BlueValue, features.Brightness, features.ColorBalance, features.SharpnessLevel, features.FacesInImageCount, features.AreFacesInImage]);
+    console.log(x);
     return x;
 }
 
@@ -24,8 +17,8 @@ exports.trainNetwork = function(network, photosFeatures) {
 
     // Train the network using the photos
     for (var i = 0; i < photosFeatures.length; i++) {
-        var x = featuresToVolume(photosFeatures[i]);
-        trainer.train(x, [photosFeatures[i].UserClassification]);
+        var featuresVolume = featuresToVolume(photosFeatures[i]);
+        trainer.train(featuresVolume, [photosFeatures[i].UserClassification]);
     }
 
     // return trained network
@@ -33,10 +26,8 @@ exports.trainNetwork = function(network, photosFeatures) {
 }
 
 exports.predictImage = function(network, photoFeatures) {
-    return 1;
+    var featuresVolume = featuresToVolume(photoFeatures);
 
-    var x = featuresToVolume(photosFeatures[i]);
-
-    var prediction = network.forward(x);
+    var prediction = network.forward(featuresVolume);
     return prediction;
 };

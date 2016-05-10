@@ -197,7 +197,8 @@ router.post('/upload', uploading.any(), function(req, res) {
                         photo.FacesInImageCount = imageFeatrues.FacesInImageCount;
                         photo.AreFacesInImage = imageFeatrues.AreFacesInImage;
                         photo.UserClassification = UserClassification.Unknown.value;
-                        photo.networkScore = network.GetScore();
+                        photo.networkScore = Cnn.predictImage('lie',photo);
+
                         photo.save(function(err, photoInDb) {
                             if (err) {
                                 return callback(err);
@@ -219,8 +220,6 @@ router.post('/upload', uploading.any(), function(req, res) {
             }
         });
     });
-
-    // NO NEED TO TRAIN THE NETWORK, we need to estimate the score using the network.
 });
 
 router.post('/sendUpdates', function(req, res) {
