@@ -1,7 +1,8 @@
 var express = require('express');
 var bodyParser = require("body-parser");
 var mongoose = require('mongoose');
-var multer = require('multer')
+var config = require('config');
+var multer = require('multer');
 
 // Set up the app
 var app = express();
@@ -47,8 +48,8 @@ app.use('/', albums);
 
 //connect to our database
 //Ideally you will obtain DB details from a config file
-var dbName = 'PhotoFilterDB';
-var connectionString = 'mongodb://localhost:27017/' + dbName;
+var dbConfig = config.get('PhotoFilter.dbConfig');
+var connectionString = 'mongodb://'+ dbConfig.host +':'+ dbConfig.port +'/' + dbConfig.dbName;
 mongoose.connect(connectionString);
 
 

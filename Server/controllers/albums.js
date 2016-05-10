@@ -176,8 +176,10 @@ router.post('/upload', uploading.any(), function(req, res) {
 
         var fullPath = path.resolve(dir);
 
+        var featureSrvConfig = config.get('PhotoFilter.featureServer');
+
         // Send HTTP Request to the featureRater with the full path to the album directory
-        request('http://localhost:4555/FeatureSrv/rater?src=' + fullPath, function(error, response, body) {
+        request(featureSrvConfig.addr + 'FeatureSrv/rater?src=' + fullPath, function(error, response, body) {
             if (!error && response.statusCode == 200) {
                 var calls = [];
                 var processError = null;
@@ -197,7 +199,7 @@ router.post('/upload', uploading.any(), function(req, res) {
                         photo.FacesInImageCount = imageFeatrues.FacesInImageCount;
                         photo.AreFacesInImage = imageFeatrues.AreFacesInImage;
                         photo.UserClassification = UserClassification.Unknown.value;
-                        photo.networkScore = Cnn.predictImage('lie',photo);
+                        photo.networkScore =  5 // Cnn.predictImage('lie', photo);
 
                         photo.save(function(err, photoInDb) {
                             if (err) {
