@@ -16,6 +16,7 @@ var Photo = new Schema({
     FacesInImageCount: Number,
     AreFacesInImage: Boolean,
     UserClassification: Number,
+    networkScore: Number,
 });
 
 module.exports = mongoose.model('Photo', Photo);
