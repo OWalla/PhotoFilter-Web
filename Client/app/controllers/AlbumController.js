@@ -60,19 +60,20 @@
 
         $http.get('http://localhost:8080/getAlbum/' + $scope.albumId).
         success(function(data) {
+          console.log(data);
             $scope.albumName = data.albumName
             for (index = 0; index < data.photos.length; ++index) {
                 var photo = data.photos[index];
 
-                switch (photo.classification) {
-                    case 'liked':
+                switch (photo.UserClassification) {
+                    case 1:
                         $scope.models.lists.liked.push(photo);
                         break;
 
-                    case 'disliked':
+                    case 2:
                         $scope.models.lists.disliked.push(photo);
                         break;
-                    case 'default':
+                    case 0:
                         $scope.models.lists.default.push(photo);
                         break;
                     default:

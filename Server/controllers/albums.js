@@ -24,19 +24,23 @@ router.get('/getUserAlbums/:user_id', function(req, res) {
 router.get('/getAlbum/:album_id', function(req, res) {
   var albumId = req.params.album_id;
   Album.findById(albumId, function(err, albums) {
-    if (err) {
-      console.log(err);
-    } else {
-      Photo.find({
-        album: albumId
-      }, function(err, photos) {
-        if (err) {
-          console.log(err);
-        } else {
-          console.log(photos);
-          res.json(photos);
-        }
-      })
+      if (err) {
+        console.log(err);
+      } else {
+        Photo.find({
+          album: albumId
+        }).sort({GreenValue: 'descending'}).exec(function(err, photos) {
+          if (err) {
+            console.log(err);
+          } else {
+            console.log(photos);
+            var resultObject = {
+              albumName: albums.albumName,
+              photos: photos
+            }
+            res.json(resultObject);
+          }
+        })
     }
   });
 });
@@ -91,7 +95,7 @@ router.post('/upload', uploading.any(), function(req, res) {
         data.result.forEach(function(imageFeatrues) {
           calls.push(function(callback) {
             var photo = new Photo();
-            photo.ImagePath = path.basename(imageFeatrues.FeatureSource);
+            photo.PathImageName = path.basename(imageFeatrues.ImagePath);
             photo.album = albumDb._id;
             photo.RedValue = imageFeatrues.RedValue;
             photo.GreenValue = imageFeatrues.GreenValue;

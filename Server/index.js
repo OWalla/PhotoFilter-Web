@@ -38,6 +38,7 @@ app.use(function(req, res, next) {
 var networks = require('./controllers/network');
 var albums = require('./controllers/albums');
 app.use('/assets', express.static('assets'));
+app.use('/uploads', express.static('uploads'));
 
 // Use jade engine
 app.set('view engine', 'jade');
