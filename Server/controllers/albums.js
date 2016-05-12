@@ -2,6 +2,7 @@ var express = require('express');
 var multer = require('multer');
 var router = express.Router();
 var crypto = require('crypto');
+var config = require('config');
 var mime = require('mime');
 var fs = require('fs');
 var path = require('path');
@@ -11,7 +12,6 @@ var Album = require('../models/album.js')
 var Photo = require('../models/photo.js')
 var UserClassification = require('../models/userClassification.js')
 var Cnn = require('../libs/cnn.js');
-var config = require('config');
 
 /* GET home page. */
 router.get('/getUserAlbums/:user_id', function(req, res) {
@@ -87,31 +87,30 @@ router.post('/upload', uploading.any(), function(req, res) {
 
     // Send HTTP Request to the featureRater with the full path to the album directory
     request(featureSrvConfig.addr + 'FeatureSrv/rater?src=' + fullPath, function(error, response, body) {
-      if (!error && response.statusCode == 200) {
-        var calls = [];
-        var processError = null;
-        var data = JSON.parse(body);
-        // Go over each picture result, and save it to the DB.
-        data.result.forEach(function(imageFeatrues) {
-          calls.push(function(callback) {
-            var photo = new Photo();
-            photo.PathImageName = path.basename(imageFeatrues.ImagePath);
-            photo.album = albumDb._id;
-            photo.RedValue = imageFeatrues.RedValue;
-            photo.GreenValue = imageFeatrues.GreenValue;
-            photo.BlueValue = imageFeatrues.BlueValue;
-            photo.Brightness = imageFeatrues.Brightness;
-            photo.ColorBalance = imageFeatrues.ColorBalance;
-            photo.SharpnessLevel = imageFeatrues.SharpnessLevel;
-            photo.FacesInImageCount = imageFeatrues.FacesInImageCount;
-            photo.AreFacesInImage = imageFeatrues.AreFacesInImage;
-            photo.UserClassification = UserClassification.Unknown.value;
-            photo.networkScore = 5 // Cnn.predictImage('lie', photo);
-
-            photo.save(function(err, photoInDb) {
-              if (err) {
-                return callback(err);
-              }
+        if (!error && response.statusCode == 200) {
+            var calls = [];
+            var processError = null;
+            var data = JSON.parse(body);
+            // Go over each picture result, and save it to the DB.
+            data.result.forEach(function(imageFeatrues) {
+                calls.push(function(callback) {
+                    var photo = new Photo();
+                    photo.PathImageName = path.basename(imageFeatrues.FeatureSource);
+                    photo.album = albumDb._id;
+                    photo.RedValue = imageFeatrues.Features.RedValue;
+                    photo.GreenValue = imageFeatrues.Features.GreenValue;
+                    photo.BlueValue = imageFeatrues.Features.BlueValue;
+                    photo.Brightness = imageFeatrues.Features.Brightness;
+                    photo.ColorBalance = imageFeatrues.Features.ColorBalance;
+                    photo.SharpnessLevel = imageFeatrues.Features.SharpnessLevel;
+                    photo.FacesInImageCount = imageFeatrues.Features.FacesInImageCount;
+                    photo.AreFacesInImage = imageFeatrues.Features.AreFacesInImage;
+                    photo.UserClassification = UserClassification.Unknown.value;
+                    photo.networkScore =  5; // Cnn.predictImage('lie', photo);
+                    photo.save(function(err, photoInDb) {
+                        if (err) {
+                            return callback(err);
+                        }
 
               callback(null, imageFeatrues);
             })
