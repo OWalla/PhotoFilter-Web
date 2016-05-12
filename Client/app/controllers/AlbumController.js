@@ -58,7 +58,7 @@
             }
         };
 
-        $http.get('http://localhost:8080/getAlbum/1').
+        $http.get('http://localhost:8080/getAlbum/' + $scope.albumId).
         success(function(data) {
             $scope.albumName = data.albumName
             for (index = 0; index < data.photos.length; ++index) {

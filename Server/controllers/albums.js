@@ -22,25 +22,22 @@ router.get('/getUserAlbums/:user_id', function(req, res) {
 });
 
 router.get('/getAlbum/:album_id', function(req, res) {
-  var albumName = "Name 1";
-  var photos = [{
-    label: "Picture 1",
-    src: "http://images.math.cnrs.fr/IMG/png/section8-image.png",
-    classification: 'liked'
-  }, {
-    label: "Picture 2",
-    src: "http://images.math.cnrs.fr/IMG/png/section8-image.png",
-    classification: 'disliked'
-  }, {
-    label: "Picture 3",
-    src: "http://images.math.cnrs.fr/IMG/png/section8-image.png",
-    classification: 'default'
-  }];
-
-
-  res.json({
-    albumName: albumName,
-    photos: photos
+  var albumId = req.params.album_id;
+  Album.findById(albumId, function(err, albums) {
+    if (err) {
+      console.log(err);
+    } else {
+      Photo.find({
+        album: albumId
+      }, function(err, photos) {
+        if (err) {
+          console.log(err);
+        } else {
+          console.log(photos);
+          res.json(photos);
+        }
+      })
+    }
   });
 });
 
