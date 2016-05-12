@@ -15,7 +15,7 @@ var Cnn = require('../libs/cnn.js');
 
 /* GET home page. */
 router.get('/getUserAlbums/:user_id', function(req, res) {
-  Album.find({}, function(err, albums) {
+  Album.find({}).populate('photos').exec(function(err, albums) {
     console.log(albums);
     res.json(albums);
   });
@@ -24,23 +24,25 @@ router.get('/getUserAlbums/:user_id', function(req, res) {
 router.get('/getAlbum/:album_id', function(req, res) {
   var albumId = req.params.album_id;
   Album.findById(albumId, function(err, albums) {
-      if (err) {
-        console.log(err);
-      } else {
-        Photo.find({
-          album: albumId
-        }).sort({GreenValue: 'descending'}).exec(function(err, photos) {
-          if (err) {
-            console.log(err);
-          } else {
-            console.log(photos);
-            var resultObject = {
-              albumName: albums.albumName,
-              photos: photos
-            }
-            res.json(resultObject);
+    if (err) {
+      console.log(err);
+    } else {
+      Photo.find({
+        album: albumId
+      }).sort({
+        FacesInImageCount: 'desc',
+        GreenValue: 'descending'
+      }).exec(function(err, photos) {
+        if (err) {
+          console.log(err);
+        } else {
+          var resultObject = {
+            albumName: albums.albumName,
+            photos: photos
           }
-        })
+          res.json(resultObject);
+        }
+      })
     }
   });
 });
@@ -87,30 +89,32 @@ router.post('/upload', uploading.any(), function(req, res) {
 
     // Send HTTP Request to the featureRater with the full path to the album directory
     request(featureSrvConfig.addr + 'FeatureSrv/rater?src=' + fullPath, function(error, response, body) {
-        if (!error && response.statusCode == 200) {
-            var calls = [];
-            var processError = null;
-            var data = JSON.parse(body);
-            // Go over each picture result, and save it to the DB.
-            data.result.forEach(function(imageFeatrues) {
-                calls.push(function(callback) {
-                    var photo = new Photo();
-                    photo.PathImageName = path.basename(imageFeatrues.FeatureSource);
-                    photo.album = albumDb._id;
-                    photo.RedValue = imageFeatrues.Features.RedValue;
-                    photo.GreenValue = imageFeatrues.Features.GreenValue;
-                    photo.BlueValue = imageFeatrues.Features.BlueValue;
-                    photo.Brightness = imageFeatrues.Features.Brightness;
-                    photo.ColorBalance = imageFeatrues.Features.ColorBalance;
-                    photo.SharpnessLevel = imageFeatrues.Features.SharpnessLevel;
-                    photo.FacesInImageCount = imageFeatrues.Features.FacesInImageCount;
-                    photo.AreFacesInImage = imageFeatrues.Features.AreFacesInImage;
-                    photo.UserClassification = UserClassification.Unknown.value;
-                    photo.networkScore =  5; // Cnn.predictImage('lie', photo);
-                    photo.save(function(err, photoInDb) {
-                        if (err) {
-                            return callback(err);
-                        }
+      if (!error && response.statusCode == 200) {
+        var calls = [];
+        var processError = null;
+        var data = JSON.parse(body);
+        // Go over each picture result, and save it to the DB.
+        data.result.forEach(function(imageFeatrues) {
+          calls.push(function(callback) {
+            var photo = new Photo();
+            photo.PathImageName = path.basename(imageFeatrues.Src);
+            photo.album = albumDb._id;
+            photo.RedValue = imageFeatrues.Features.RedValue;
+            photo.GreenValue = imageFeatrues.Features.GreenValue;
+            photo.BlueValue = imageFeatrues.Features.BlueValue;
+            photo.Brightness = imageFeatrues.Features.Brightness;
+            photo.ColorBalance = imageFeatrues.Features.ColorBalance;
+            photo.SharpnessLevel = imageFeatrues.Features.SharpnessLevel;
+            photo.FacesInImageCount = imageFeatrues.Features.FacesInImageCount;
+            photo.AreFacesInImage = imageFeatrues.Features.AreFacesInImage;
+            photo.UserClassification = UserClassification.Unknown.value;
+            photo.networkScore = 5; // Cnn.predictImage('lie', photo);
+            photo.save(function(err, photoInDb) {
+              if (err) {
+                return callback(err);
+              }
+
+              albumDb.photos.push(photo);
 
               callback(null, imageFeatrues);
             })
@@ -122,7 +126,10 @@ router.post('/upload', uploading.any(), function(req, res) {
             console.log(err);
             res.json(err);
           } else {
-            res.json("Cool");
+            albumDb.save(function(err, result) {
+
+              res.redirect('http://localhost:8001/#/main/');
+            })
           }
         });
       }
@@ -130,11 +137,33 @@ router.post('/upload', uploading.any(), function(req, res) {
   });
 });
 
-router.post('/sendUpdates', function(req, res) {
+function updatePhotoUserClassifcation(photo, classifcation) {
+  // get photo by id from db
+  Photo.findById(photo._id, function(err, photoInDb) {
 
-  console.log(req.body);
-  console.log(req.body.albumId);
-  console.log(req.body.classifications);
+    // update classifications
+    photoInDb.UserClassification = classifcation;
+
+    //save to db
+    photoInDb.save();
+  });
+}
+
+router.post('/sendUpdates', function(req, res) {
+  var albumId = req.body.albumId;
+  var userClassifications = req.body.classifications;
+
+  for (i = 0; i < userClassifications.liked.length; ++i) {
+    updatePhotoUserClassifcation(userClassifications.liked[i], UserClassification.Liked.value);
+  }
+
+  for (i = 0; i < userClassifications.disliked.length; ++i) {
+    updatePhotoUserClassifcation(userClassifications.disliked[i], UserClassification.Disliked.value);
+  }
+
+  for (i = 0; i < userClassifications.default.length; ++i) {
+    updatePhotoUserClassifcation(userClassifications.default[i], UserClassification.Unknown.value);
+  }
 
   // TODO: Update the album pictrues with the new classifications
 

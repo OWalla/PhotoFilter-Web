@@ -4,7 +4,7 @@
 <div class="photoGallery col-lg-12 col-md-12 col-xs-12">
   <div ng-repeat="album in albums" class="col-lg-3 col-md-4 col-xs-6 thumb">
     <a class="thumbnail" href="#/album/{{album._id}}">
-      <img data-ng-src="{{album.thumb_image}}" alt="{{album.albumName}}" style="width:150px;height:150px"/>
+      <img data-ng-src="http://localhost:8080/uploads/{{album._id}}/{{album.photos[0].PathImageName}}" alt="{{album.albumName}}" style="width:150px;height:150px"/>
       <figcaption class="figure-caption text-center">{{album.albumName}}</figcaption>
     </a>
   </div>
