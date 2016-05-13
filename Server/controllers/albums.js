@@ -30,8 +30,7 @@ router.get('/getAlbum/:album_id', function(req, res) {
       Photo.find({
         album: albumId
       }).sort({
-        FacesInImageCount: 'desc',
-        GreenValue: 'descending'
+        networkScore: 'desc'
       }).exec(function(err, photos) {
         if (err) {
           console.log(err);
@@ -73,7 +72,7 @@ router.post('/upload', uploading.any(), function(req, res) {
   album.albumName = req.body.albumId;
   album.save(function(err, albumDb) {
     var uploadConfig = config.get('PhotoFilter.upload');
-    var dir = uploadConfig.rootFolder + albumDb._id;;
+    var dir = uploadConfig.rootFolder + albumDb._id;
 
     if (!fs.existsSync(dir)) {
       fs.mkdirSync(dir);
@@ -81,6 +80,7 @@ router.post('/upload', uploading.any(), function(req, res) {
 
     var fullPath = path.resolve(dir);
 
+    // Moving the files from the temporary folder to the album folder
     for (var i = 0; i < req.files.length; i++) {
       var filePath = path.resolve(req.files[i].path);
       var dstFilePath = path.resolve(dir, path.basename(filePath));
