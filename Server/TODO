@@ -1,0 +1,9 @@
+- Initial networks.
+- Automatically classify strong predictions. (Sort to dislike / liked)
+- Get network score for each picture
+- Download button for all liked pictures.
+- Retrain the network after every classification session.
+- Authentication
+- Uploading feedback (search: angular nodejs upload progress(bar)).
+- Proper upload page.
+- אפליקציית היכוריות מבוססת התמונות שאהבת
