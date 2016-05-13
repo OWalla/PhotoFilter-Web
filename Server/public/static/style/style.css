@@ -45,6 +45,13 @@ body{
   border-radius: 10px;
   border: 1px solid black;
 }
+.albumDNDCategory{
+    column-count: 3;
+}
+.albumDNDPhoto{
+    margin: 3px;
+}
+
 .albumClassification ul {
   display: block;
   box-sizing: border-box;

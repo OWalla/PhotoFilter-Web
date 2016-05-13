@@ -7,8 +7,8 @@
     <div ng-repeat="(listName, list) in models.lists" class="col-lg-4 col-md-4 col-xs-4">
         <strong class="{{getClass(listName) }}" style="font-size: 14pt"> {{listName}}</strong>
         <div class="albumClassification">
-            <ul dnd-list="list">
-                <li ng-repeat="item in list" dnd-draggable="item" dnd-moved="list.splice($index, 1)" dnd-effect-allowed="move" dnd-selected="models.selected = item" ng-class="{'selected': models.selected === item}">
+            <ul class="albumDNDCategory" dnd-list="list">
+                <li ng-repeat="item in list"  class="albumDNDPhoto" dnd-draggable="item" dnd-moved="list.splice($index, 1)" dnd-effect-allowed="move" dnd-selected="models.selected = item" ng-class="{'selected': models.selected === item}">
                     <img ng-src="/uploads/{{item.album}}/{{getThumbnail(item.PathImageName)}}" alt="{{item._id}}" style="height: 40px;" />
                 </li>
             </ul>
