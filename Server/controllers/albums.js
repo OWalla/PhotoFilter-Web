@@ -12,11 +12,11 @@ var Album = require('../models/album.js')
 var Photo = require('../models/photo.js')
 var UserClassification = require('../models/userClassification.js')
 var Cnn = require('../libs/cnn.js');
+var jimp = require("jimp");
 
 /* GET home page. */
 router.get('/getUserAlbums/:user_id', function(req, res) {
   Album.find({}).populate('photos').exec(function(err, albums) {
-    console.log(albums);
     res.json(albums);
   });
 });
@@ -79,13 +79,13 @@ router.post('/upload', uploading.any(), function(req, res) {
       fs.mkdirSync(dir);
     }
 
+    var fullPath = path.resolve(dir);
+
     for (var i = 0; i < req.files.length; i++) {
       var filePath = path.resolve(req.files[i].path);
       var dstFilePath = path.resolve(dir, path.basename(filePath));
-      fs.renameSync(filePath, dstFilePath)
+      fs.renameSync(filePath, dstFilePath);
     }
-
-    var fullPath = path.resolve(dir);
 
     var featureSrvConfig = config.get('PhotoFilter.featureServer');
 
@@ -117,7 +117,6 @@ router.post('/upload', uploading.any(), function(req, res) {
               }
 
               albumDb.photos.push(photo);
-
               callback(null, imageFeatrues);
             })
           });
@@ -128,15 +127,32 @@ router.post('/upload', uploading.any(), function(req, res) {
             console.log(err);
             res.json(err);
           } else {
-            albumDb.save(function(err, result) {
-
-              res.redirect('/');
-            })
+            albumDb.save();
+            res.redirect('/');
           }
         });
       }
     });
-  });
+
+
+    // Create thumbnails
+    fs.readdir(dir, function(err, files) {
+      if (err) {
+        console.log(err);
+      } else {
+        files.forEach(function(file) {
+          var dstFilePath = path.resolve(dir, path.basename(file));
+          var dstExtension = path.extname(dstFilePath);
+          var dstFileName = path.basename(dstFilePath, dstExtension);
+          jimp.read(dstFilePath, function(err, image) {
+            var thumbFileName = dir + '/' + dstFileName + '_thumb' + dstExtension;
+            console.log(thumbFileName);
+            image.resize(100, jimp.AUTO).quality(60).write(thumbFileName);
+          });
+        });
+      }
+    });
+  })
 });
 
 function updatePhotoUserClassifcation(photo, classifcation) {
