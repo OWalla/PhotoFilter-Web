@@ -1,3 +1,5 @@
 node_modules
 /Server/public/uploads/*
 /Server/data/*
+/Server/start_db.bat
+.idea/*
