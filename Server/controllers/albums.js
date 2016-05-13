@@ -167,8 +167,6 @@ router.post('/sendUpdates', function(req, res) {
     updatePhotoUserClassifcation(userClassifications.default[i], UserClassification.Unknown.value);
   }
 
-  // TODO: Update the album pictrues with the new classifications
-
   // TODO: Call network train
 
   res.json("Cool!");
