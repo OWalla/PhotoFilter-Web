@@ -7,19 +7,19 @@
 
   function MainController($scope, $http) {
 
-    $http.get('http://localhost:8080/getNetwork/1').
+    $http.get('/getNetwork/1').
     success(function(data) {
       $scope.network = data;
 
       if (!$scope.network) {
-        $http.get('http://localhost:8080/getStartingNetworks').
+        $http.get('/getStartingNetworks').
         success(function(data) {
           $scope.networks = data;
         });
       }
     });
 
-    $http.get('http://localhost:8080/getUserAlbums/1').
+    $http.get('/getUserAlbums/1').
     success(function(data) {
       $scope.albums = data;
     });

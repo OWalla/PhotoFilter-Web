@@ -49,7 +49,8 @@ router.get('/getAlbum/:album_id', function(req, res) {
 
 var storage = multer.diskStorage({
   destination: function(req, file, cb) {
-    var dir = './uploads/temp/'
+    var uploadConfig = config.get('PhotoFilter.upload');
+    var dir = uploadConfig.rootFolder + uploadConfig.tempFolder;
 
     if (!fs.existsSync(dir)) {
       fs.mkdirSync(dir);
@@ -71,7 +72,8 @@ router.post('/upload', uploading.any(), function(req, res) {
   var album = new Album();
   album.albumName = req.body.albumId;
   album.save(function(err, albumDb) {
-    var dir = './uploads/' + albumDb._id;
+    var uploadConfig = config.get('PhotoFilter.upload');
+    var dir = uploadConfig.rootFolder + albumDb._id;;
 
     if (!fs.existsSync(dir)) {
       fs.mkdirSync(dir);
@@ -128,7 +130,7 @@ router.post('/upload', uploading.any(), function(req, res) {
           } else {
             albumDb.save(function(err, result) {
 
-              res.redirect('http://localhost:8001/#/main/');
+              res.redirect('/');
             })
           }
         });

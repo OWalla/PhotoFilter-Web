@@ -8,7 +8,7 @@
         $scope.albumId = $routeParams.albumId;
 
         $scope.sendUpdates = function() {
-            $http.post('http://localhost:8080/sendUpdates', {
+            $http.post('/sendUpdates', {
                 albumId: $scope.albumId,
                 classifications: $scope.models.lists
             }).
@@ -58,7 +58,7 @@
             }
         };
 
-        $http.get('http://localhost:8080/getAlbum/' + $scope.albumId).
+        $http.get('/getAlbum/' + $scope.albumId).
         success(function(data) {
           console.log(data);
             $scope.albumName = data.albumName

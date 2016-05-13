@@ -8,9 +8,9 @@
         "featureServer": {
             "addr": "http://localhost:4555/"
         },
-        "credit": {
-            "initialLimit": 100,
-            "initialDays": 1
+        "upload": {
+            "rootFolder": "./public/uploads/",
+            "tempFolder": "temp/"
         }
     }
 }
