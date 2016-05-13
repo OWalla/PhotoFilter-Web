@@ -12,8 +12,6 @@ app.use(bodyParser.urlencoded({
 }));
 app.use(bodyParser.json());
 
-// Routings
-
 // Add headers
 app.use(function(req, res, next) {
 
