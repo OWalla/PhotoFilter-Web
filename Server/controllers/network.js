@@ -2,6 +2,9 @@ var express = require('express');
 var Photo = require('../models/photo.js');
 var Album = require('../models/album.js');
 var Cnn = require('../libs/cnn.js')
+var fs = require('fs');
+var jsonfile = require('jsonfile');
+var config = require('config');
 var router = express.Router();
 
 /* GET home page. */
@@ -36,7 +39,17 @@ router.get('/trainNetwork', function (req, res) {
                         // Train the network with these photos
                         var net = Cnn.trainFirstNetwork(photos);
 
-                        //TODO: save the network on the server and redirect to the main page
+                        var networkConfig = config.get('PhotoFilter.network');
+                        var dir = networkConfig.rootFolder;
+
+                        if (!fs.existsSync(dir)) {
+                            fs.mkdirSync(dir);
+                        };
+
+                        var file = dir + req.query.networkName + '.json'
+                        jsonfile.writeFile(file, net, function (err) {
+                            console.error(err)
+                        })
 
                         // var prediction = Cnn.predictImage(net, photosArray[1]);
                         // console.log('prediction is: ' + prediction.w[0]);

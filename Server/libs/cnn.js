@@ -12,7 +12,7 @@ exports.trainFirstNetwork = function(photosFeaturesList){
 
     layer_defs.push({type:'input', out_sx:1, out_sy:1, out_depth:8});
     layer_defs.push({type:'fc', num_neurons:5, activation:'relu'});
-    layer_defs.push({type:'softmax', num_classes:2});
+    layer_defs.push({type:'svm', num_classes:2});
 
     // create the network
     var net = new convnetjs.Net();

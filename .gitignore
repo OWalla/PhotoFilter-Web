@@ -3,4 +3,5 @@ node_modules
 /Server/data/*
 /Server/start_db.bat
 /Server/Uploads/*
+/Server/Networks/*
 .idea/*
