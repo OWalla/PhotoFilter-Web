@@ -11,7 +11,7 @@ var request = require('request');
 var Album = require('../models/album.js');
 var Photo = require('../models/photo.js');
 var UserClassification = require('../models/userClassification.js')
-var Cnn = require('../libs/cnn.js');
+var Svm = require('../libs/svm.js');
 var jimp = require("jimp");
 
 /* GET home page. */
@@ -110,7 +110,7 @@ router.post('/upload', uploading.any(), function(req, res) {
             photo.FacesInImageCount = imageFeatrues.Features.FacesInImageCount;
             photo.AreFacesInImage = imageFeatrues.Features.AreFacesInImage;
             photo.UserClassification = UserClassification.Unknown.value;
-            photo.networkScore = 5; // Cnn.predictImage('lie', photo);
+            photo.networkScore = 5; // Svm.predictImage('lie', photo);
             photo.save(function(err, photoInDb) {
               if (err) {
                 return callback(err);

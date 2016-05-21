@@ -12,8 +12,8 @@
             "rootFolder": "./public/uploads/",
             "tempFolder": "temp/"
         },
-      "network": {
-        "rootFolder": "./public/networks/"
+      "SVM": {
+        "rootFolder": "./public/SVM/"
       }
     }
 }
