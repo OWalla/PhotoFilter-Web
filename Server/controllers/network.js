@@ -26,6 +26,32 @@ router.get('/getStartingNetworks', function (req, res) {
 
     res.json(networks);
 });
+router.get('/predictImages', function (req, res) {
+    var featureSrvConfig = config.get('PhotoFilter.featureServer');
+    var fullAlbum = [];
+    var tempAlbum = [];
+
+    request(featureSrvConfig.addr + 'FeatureSrv/rater?src=' + req.query.images, function (error, response, body) {
+        if (!error && response.statusCode == 200) {
+            var data = JSON.parse(body);
+            tempAlbum = data.result;
+            tempAlbum.forEach(function (element, index) {
+                fullAlbum.push(element.Features);
+            });
+
+            var SVMConfig = config.get('PhotoFilter.SVM');
+            var dir = SVMConfig.rootFolder;
+
+            var svmString = fs.readFileSync(dir + req.query.svm + ".json", 'utf-8');
+            console.log(svmString);
+
+            var svmJSON = JSON.parse(svmString);
+            var prediction = Svm.predictImage(svmJSON, fullAlbum);
+
+            res.send(prediction);
+        }
+    });
+})
 
 router.get('/trainSVMFolders', function (req, res) {
 
