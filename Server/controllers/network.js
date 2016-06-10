@@ -6,6 +6,7 @@ var fs = require('fs');
 var jsonfile = require('jsonfile');
 var config = require('config');
 var request = require('request');
+var async = require('async');
 var router = express.Router();
 
 /* GET home page. */
@@ -62,58 +63,73 @@ router.get('/trainSVMFolders', function(req, res) {
   const LIKED = 1,
     DISLIKED = -1;
 
-  console.log("Sending the liked images to the feature server");
+  var calls = [];
 
-  // Send HTTP Request to the featureRater with the full path to the album directory
-  request(featureSrvConfig.addr + 'FeatureSrv/rater?src=' + req.query.liked, function(error, response, body) {
-    if (!error && response.statusCode == 200) {
-      console.log("Feature analysis - Done")
-      var data = JSON.parse(body);
-      tempAlbum = data.result;
-      tempAlbum.forEach(function(element, index) {
-        fullAlbum.push(element.Features);
-        labels.push(LIKED);
+  calls.push(function(callback) {
+    console.log("Sending the liked images to the feature server");
+    request(featureSrvConfig.addr + 'FeatureSrv/rater?src=' + req.query.liked, function(err, response, body) {
+      if (err) {
+        return callback(err);
+      } else {
+        console.log("Feature analysis - Done")
+        var data = JSON.parse(body);
+        tempAlbum = data.result;
+        tempAlbum.forEach(function(element, index) {
+          fullAlbum.push(element.Features);
+          labels.push(LIKED);
+        });
 
-      });
+        callback(null);
+      }
+    })
+  });
 
-      console.log("Sending the disliked images to the feature server");
 
-      // Send HTTP Request to the featureRater with the full path to the album directory
-      request(featureSrvConfig.addr + 'FeatureSrv/rater?src=' + req.query.disliked, function(error, response, body) {
+  calls.push(function(callback) {
+    console.log("Sending the disliked images to the feature server");
+    request(featureSrvConfig.addr + 'FeatureSrv/rater?src=' + req.query.disliked, function(err, response, body) {
+      if (err) {
+        return callback(err);
+      } else {
+        console.log("Disliked feature analysis - Done")
 
-        if (!error && response.statusCode == 200) {
-          console.log("Disliked feature analysis - Done")
+        var data = JSON.parse(body);
+        tempAlbum = data.result;
+        tempAlbum.forEach(function(element, index) {
+          fullAlbum.push(element.Features);
+          labels.push(DISLIKED);
+        });
 
-          var data = JSON.parse(body);
-          tempAlbum = data.result;
-          tempAlbum.forEach(function(element, index) {
-            fullAlbum.push(element.Features);
-            labels.push(DISLIKED);
-          });
+        callback(null);
+      }
+    })
+  });
 
-          // Train the network with these photos
-          var trainedSVM = Svm.trainFirstSVM(fullAlbum, labels);
-          var SVMConfig = config.get('PhotoFilter.SVM');
-          var dir = SVMConfig.rootFolder;
+  async.parallel(calls, function(err, result) {
+    if (err) {
+      console.log(err);
+      res.json(err);
+    } else {
+      var trainedSVM = Svm.trainFirstSVM(fullAlbum, labels);
+      var SVMConfig = config.get('PhotoFilter.SVM');
+      var dir = SVMConfig.rootFolder;
 
-          if (!fs.existsSync(dir)) {
-            fs.mkdirSync(dir);
-          };
+      if (!fs.existsSync(dir)) {
+        fs.mkdirSync(dir);
+      };
 
-          var file = dir + req.query.SVMName + '.json'
-          jsonfile.writeFile(file, trainedSVM);
+      var file = dir + req.query.SVMName + '.json'
+      jsonfile.writeFile(file, trainedSVM);
 
-          console.log("Done training!");
+      console.log("Done training!");
 
-          // var prediction = Svm.predictImage(trainedSVM, fullAlbum);
-          // console.log('prediction is: ' + prediction);
-          res.send(trainedSVM);
-
-        }
-      });
-
+      // var prediction = Svm.predictImage(trainedSVM, fullAlbum);
+      // console.log('prediction is: ' + prediction);
+      res.send(trainedSVM);
     }
   });
+
+
 });
 
 router.get('/trainSVM', function(req, res) {
