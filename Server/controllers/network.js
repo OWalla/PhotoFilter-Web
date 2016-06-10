@@ -5,6 +5,7 @@ var Svm = require('../libs/svm.js')
 var fs = require('fs');
 var jsonfile = require('jsonfile');
 var config = require('config');
+var request = require('request');
 var router = express.Router();
 
 /* GET home page. */
@@ -25,6 +26,60 @@ router.get('/getStartingNetworks', function (req, res) {
 
     res.json(networks);
 });
+
+router.get('/trainSVMFolders', function (req, res) {
+
+    var featureSrvConfig = config.get('PhotoFilter.featureServer');
+    var fullAlbum = [];
+    var labels = [];
+    var tempAlbum = [];
+    const LIKED = 1, DISLIKED = -1;
+
+    // Send HTTP Request to the featureRater with the full path to the album directory
+    request(featureSrvConfig.addr + 'FeatureSrv/rater?src=' + req.query.liked, function (error, response, body) {
+        if (!error && response.statusCode == 200) {
+
+            var data = JSON.parse(body);
+            tempAlbum = data.result;
+            tempAlbum.forEach(function (element, index) {
+                fullAlbum.push(element.Features);
+                labels.push(LIKED);
+
+            });
+            // Send HTTP Request to the featureRater with the full path to the album directory
+            request(featureSrvConfig.addr + 'FeatureSrv/rater?src=' + req.query.disliked, function (error, response, body) {
+                if (!error && response.statusCode == 200) {
+
+                    var data = JSON.parse(body);
+                    tempAlbum = data.result;
+                    tempAlbum.forEach(function (element, index) {
+                        fullAlbum.push(element.Features);
+                        labels.push(DISLIKED);
+                    });
+                    // Train the network with these photos
+                    var trainedSVM = Svm.trainFirstSVM(fullAlbum, labels);
+                    var SVMConfig = config.get('PhotoFilter.SVM');
+                    var dir = SVMConfig.rootFolder;
+
+                    if (!fs.existsSync(dir)) {
+                        fs.mkdirSync(dir);
+                    }
+                    ;
+
+                    var file = dir + req.query.SVMName + '.json'
+                    jsonfile.writeFile(file, trainedSVM);
+
+                    // var prediction = Svm.predictImage(trainedSVM, fullAlbum);
+                    // console.log('prediction is: ' + prediction);
+                    res.send(trainedSVM);
+
+                }
+            });
+
+        }
+    });
+});
+
 router.get('/trainSVM', function (req, res) {
 
     // Find the album in the DB by it's name.
@@ -40,7 +95,7 @@ router.get('/trainSVM', function (req, res) {
                     else {
 
                         var labels = [];
-                        photosArray.forEach(function(element, index){
+                        photosArray.forEach(function (element, index) {
                             labels.push(element.UserClassification);
                         });
 
@@ -52,7 +107,8 @@ router.get('/trainSVM', function (req, res) {
 
                         if (!fs.existsSync(dir)) {
                             fs.mkdirSync(dir);
-                        };
+                        }
+                        ;
 
                         var file = dir + req.query.SVMName + '.json'
                         jsonfile.writeFile(file, trainedSVM, function (err) {

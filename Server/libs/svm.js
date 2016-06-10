@@ -13,8 +13,20 @@ exports.trainFirstSVM = function(data, labels){
 
     // create the SVM
     var svm = new svmjs.SVM();
-    svm.train(data, labels,options);
+    var newData = [];
+    data.forEach(function (element, index) {
+        var arr = [element.RedValue,
+            element.GreenValue,
+            element.BlueValue,
+            element.Brightness,
+            element.ColorBalance,
+            element.SharpnessLevel,
+            element.FacesInImageCount,
+            element.AreFacesInImage == true ? 1 : 0];
+        newData.push(arr);
+    });
 
+    svm.train(newData, labels,options);
     // return the SVM as JSON
     var SVMJson = svm.toJSON();
 
@@ -39,8 +51,20 @@ exports.predictImage = function(SvmJson, photos) {
 
     // Load the pre trained svm
     var svm = new svmjs.SVM();
-    svm.fromJSON(preTrainedSVM);
+    svm.fromJSON(SvmJson);
 
-    var testLabels = svm.predict(photos);
+    var newData = [];
+    photos.forEach(function (element, index) {
+        var arr = [element.RedValue,
+            element.GreenValue,
+            element.BlueValue,
+            element.Brightness,
+            element.ColorBalance,
+            element.SharpnessLevel,
+            element.FacesInImageCount,
+            element.AreFacesInImage == true ? 1 : 0];
+        newData.push(arr);
+    });
+    var testLabels = svm.predict(newData);
     return testLabels;
 };
