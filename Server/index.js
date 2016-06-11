@@ -34,6 +34,7 @@ app.use(function(req, res, next) {
 
 var networks = require('./controllers/network');
 var albums = require('./controllers/albums');
+var login = require('./controllers/login');
 app.use('/', express.static('public'));
 
 // Use jade engine
@@ -42,6 +43,7 @@ app.set('view engine', 'jade');
 // Set up the routings
 app.use('/', networks);
 app.use('/', albums);
+app.use('/', login);
 
 //connect to our database
 //Ideally you will obtain DB details from a config file

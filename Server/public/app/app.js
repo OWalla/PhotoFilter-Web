@@ -8,10 +8,14 @@
         templateUrl: "views/main.html",
         controller: "MainController"
       })
+	  .when("/login", {
+        templateUrl: "views/login.html",
+        controller: "LoginController"
+      })
       .when("/album/:albumId", {
         templateUrl: "views/album_view.html",
         controller: "AlbumController"
-      })
+	  })
       .when("/photo/:photoId", {
         templateUrl: "views/view_photo.html",
         controller: "PhotoController"
