@@ -48,11 +48,10 @@ app.use('/', login);
 //connect to our database
 //Ideally you will obtain DB details from a config file
 var dbConfig = config.get('PhotoFilter.dbConfig');
-var connectionString = 'mongodb://'+ dbConfig.host +':'+ dbConfig.port +'/' + dbConfig.dbName;
-mongoose.connect(connectionString);
-
-
-// Start the app
-app.listen(8080, function() {
-    console.log('Example app listening on port 8080!');
+var connectionString = 'mongodb://' + dbConfig.host + ':' + dbConfig.port + '/' + dbConfig.dbName;
+mongoose.connect(connectionString, function(err) {
+    // Start the app
+    app.listen(8080, function() {
+        console.log('Example app listening on port 8080!');
+    });
 });
