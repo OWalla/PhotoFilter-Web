@@ -3,6 +3,7 @@ var multer = require('multer');
 var router = express.Router();
 var User = require('../models/user.js');
 var assert = require('assert');
+var jwt = require("jsonwebtoken");
 
 
 router.post('/authenticate', function(req, res) {
@@ -25,7 +26,7 @@ router.post('/authenticate', function(req, res) {
       } else {
         res.json({
           type: false,
-          data: "Incorrect email/password"
+          data: "Incorrect username/password"
         });
       }
     }
@@ -34,8 +35,7 @@ router.post('/authenticate', function(req, res) {
 
 router.post('/signin', function(req, res) {
   User.findOne({
-    Username: req.body.username,
-    Password: req.body.password
+    Username: req.body.username
   }, function(err, user) {
     if (err) {
       res.json({
@@ -44,6 +44,7 @@ router.post('/signin', function(req, res) {
       });
     } else {
       if (user) {
+        console.log(user);
         res.json({
           type: false,
           data: "User already exists!"
@@ -56,7 +57,7 @@ router.post('/signin', function(req, res) {
         userModel.LastName = req.body.LastName;
         userModel.Email = req.body.Email;
         userModel.StartingNetworkName = req.body.startingNetwork;
-        userModel.CurrentNetworkData = get_network_data(req.body.startingNetwork);
+        userModel.CurrentNetworkData = 0 //get_network_data(req.body.startingNetwork);
 
         userModel.save(function(err, user) {
           user.token = jwt.sign(user, process.env.JWT_SECRET);
