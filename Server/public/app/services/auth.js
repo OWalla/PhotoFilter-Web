@@ -37,15 +37,20 @@ angular.module('MainApp')
 
     return {
       save: function(data, success, error) {
-        $http.post(baseUrl + '/signin', data).success(success).error(error)
+        $http.post(baseUrl + '/signup', data).success(success).error(error)
       },
       signin: function(data, success, error) {
+        console.log(data);
         $http.post(baseUrl + '/authenticate', data).success(success).error(error)
       },
       logout: function(success) {
         changeUser({});
         delete $localStorage.token;
         success();
+      },
+
+      getCurrentUser: function() {
+        return getUserFromToken($localStorage.token)._doc;
       }
     };
   }]);
