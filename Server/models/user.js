@@ -10,6 +10,7 @@ var User = new Schema({
     StartingNetworkName: String,
     CurrentNetworkData: String,
     token: String,
+    albums : [{ type: Schema.Types.ObjectId, ref: 'Album' }]
 });
 
 module.exports = mongoose.model('User', User);
