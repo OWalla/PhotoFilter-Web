@@ -13,7 +13,8 @@
             "tempFolder": "temp/"
         },
       "SVM": {
-        "rootFolder": "./public/SVM/"
+        "rootFolder": "./public/SVM/",
+        "baseNetworksFolder": "./base_networks/"
       }
     }
 }

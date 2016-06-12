@@ -87,6 +87,11 @@ router.post('/upload', uploading.any(), function (req, res) {
             fs.renameSync(filePath, dstFilePath);
         }
 
+        var SVMConfig = config.get('PhotoFilter.SVM');
+        var SVMDir = SVMConfig.baseNetworksFolder;
+        var svmString = fs.readFileSync(SVMDir + req.body.svm + ".json", 'utf-8');
+        var svmJSON = JSON.parse(svmString);
+
         var featureSrvConfig = config.get('PhotoFilter.featureServer');
 
         // Send HTTP Request to the featureRater with the full path to the album directory
@@ -110,7 +115,7 @@ router.post('/upload', uploading.any(), function (req, res) {
                         photo.FacesInImageCount = imageFeatrues.Features.FacesInImageCount;
                         photo.AreFacesInImage = imageFeatrues.Features.AreFacesInImage;
                         photo.UserClassification = UserClassification.Unknown.value;
-                        photo.networkScore = 5; // Svm.predictImage('lie', photo);
+                        photo.networkScore = parseInt(Svm.predictImage(svmJSON, [photo]));
                         photo.save(function (err, photoInDb) {
                             if (err) {
                                 return callback(err);
