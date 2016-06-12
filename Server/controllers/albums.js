@@ -194,12 +194,6 @@ router.post('/sendUpdates', function (req, res) {
         updatePhotoUserClassifcation(userClassifications.disliked[i], UserClassification.Disliked.value);
     }
 
-    for (i = 0; i < userClassifications.default.length; ++i) {
-        updatePhotoUserClassifcation(userClassifications.default[i], UserClassification.Unknown.value);
-    }
-
-    // TODO: Call network train
-
     res.json("Cool!");
 });
 
