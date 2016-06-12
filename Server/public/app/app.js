@@ -1,5 +1,5 @@
 (function() {
-  var app = angular.module("MainApp", ["ngRoute", "dndLists"]);
+  var app = angular.module("MainApp", ["ngRoute", "dndLists", "ngStorage"]);
 
   app.config(function($routeProvider) {
     $routeProvider
@@ -10,6 +10,10 @@
       })
 	  .when("/login", {
         templateUrl: "views/login.html",
+        controller: "LoginController"
+      })
+	  .when("/register", {
+        templateUrl: "views/register.html",
         controller: "LoginController"
       })
       .when("/album/:albumId", {
