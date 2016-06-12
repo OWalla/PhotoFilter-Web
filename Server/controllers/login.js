@@ -33,7 +33,7 @@ router.post('/authenticate', function(req, res) {
   });
 });
 
-router.post('/signin', function(req, res) {
+router.post('/signup', function(req, res) {
   User.findOne({
     Username: req.body.username
   }, function(err, user) {
@@ -51,16 +51,14 @@ router.post('/signin', function(req, res) {
         });
       } else {
         var userModel = new User();
-        userModel.email = req.body.email;
-        userModel.password = req.body.password;
-        userModel.FirstName = req.body.FirstName;
-        userModel.LastName = req.body.LastName;
-        userModel.Email = req.body.Email;
-        userModel.StartingNetworkName = req.body.startingNetwork;
-        userModel.CurrentNetworkData = 0 //get_network_data(req.body.startingNetwork);
+        userModel.Username = req.body.username;
+        userModel.Password = req.body.password;
+        userModel.FirstName = req.body.first_name;
+        userModel.LastName = req.body.last_name;
+        userModel.Email = req.body.email;
 
         userModel.save(function(err, user) {
-          user.token = jwt.sign(user, process.env.JWT_SECRET);
+          user.token = jwt.sign(user, "process.env.JWT_SECRET");
           user.save(function(err, user1) {
             res.json({
               type: true,
