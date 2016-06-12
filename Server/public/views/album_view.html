@@ -1,15 +1,18 @@
 <div class="col-lg-12">
     <h2>Viewing album
-    {{ albumName }}
-  </h2>
+        {{ albumName }}
+    </h2>
 </div>
 <div class="photoGallery col-lg-12 col-md-12 col-xs-12">
-    <div ng-repeat="(listName, list) in models.lists" class="col-lg-4 col-md-4 col-xs-4">
-        <strong class="{{getClass(listName) }}" style="font-size: 14pt"> {{listName}}</strong>
+    <div ng-repeat="(listName, list) in models.lists" class="col-lg-6 col-md-6 col-xs-6">
+        <strong class="{{getClass(listName) }}" style="font-size: 14pt">
+            {{listName}}</strong>
         <div class="albumClassification">
             <ul class="albumDNDCategory" dnd-list="list">
-                <li ng-repeat="item in list"  class="albumDNDPhoto" dnd-draggable="item" dnd-moved="list.splice($index, 1)" dnd-effect-allowed="move" dnd-selected="models.selected = item" ng-class="{'selected': models.selected === item}">
-                    <img ng-src="/uploads/{{item.album}}/{{getThumbnail(item.PathImageName)}}" alt="{{item._id}}" style="height: 40px;" />
+                <li ng-repeat="item in list" class="albumDNDPhoto" dnd-draggable="item" dnd-moved="list.splice($index, 1)" dnd-effect-allowed="move" dnd-selected="models.selected = item" ng-class="{'selected': models.selected === item}">
+                    <a ng-href="/uploads/{{item.album}}/{{item.PathImageName}}">
+                        <img ng-src="/uploads/{{item.album}}/{{getThumbnail(item.PathImageName)}}" alt="{{item._id}}" style="height: 40px;"/>
+                    </a>
                 </li>
             </ul>
         </div>
