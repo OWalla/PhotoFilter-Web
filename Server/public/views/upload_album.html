@@ -1,21 +1,26 @@
 <form action="/upload" method="POST" enctype="multipart/form-data">
-<div class="col-lg-12 col-md-12 col-xs-12">
-	<div class="input-group col-md-2 col-md-offset-4">
-		<h2><span class="label">Please enter the following album details:</span></h2>
-	</div>
-	<br/>
-	<div class="input-group col-md-2 col-md-offset-5">
-		<input type="text" class="form-control" placeholder="Album Name" name="albumId">
-	</div>
-	<div class="input-group col-md-2 col-md-offset-5">
-		<select name="svm" id="svm" ng-model="chosenSVM">
-			<option ng-repeat="svm in svmNames" value="{{svm}}">{{svm}}</option>
-		</select>
-	</div>
-	<div class="input-group col-md-2 col-md-offset-5">
-		<h4><span class="label">Select files:</span></h4><input type="file" class="form-control" name="image" multiple='multiple'>
-	</div>
-	<br/>
-	<input type="submit" class="btn btn-default col-md-2 col-md-offset-5" value="Upload Image" />
-</div>
+		<input type="hidden" name="user_id" value="{{user_id}}" />
+    <div class="col-lg-12 col-md-12 col-xs-12">
+        <div class="input-group col-md-2 col-md-offset-4">
+            <h2>
+                <span class="label">Please enter the following album details:</span>
+            </h2>
+        </div>
+        <br/>
+        <div class="input-group col-md-2 col-md-offset-5">
+            <input type="text" class="form-control" placeholder="Album Name" name="albumId">
+        </div>
+        <div class="input-group col-md-2 col-md-offset-5">
+            <select name="svm" id="svm" ng-model="chosenSVM">
+                <option ng-repeat="svm in svmNames" value="{{svm}}">{{svm}}</option>
+            </select>
+        </div>
+        <div class="input-group col-md-2 col-md-offset-5">
+            <h4>
+                <span class="label">Select files:</span>
+            </h4><input type="file" class="form-control" name="image" multiple='multiple'>
+        </div>
+        <br/>
+        <input type="submit" class="btn btn-default col-md-2 col-md-offset-5" value="Upload Image"/>
+    </div>
 </form>
