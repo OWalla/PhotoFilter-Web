@@ -8,7 +8,9 @@
 		<input type="text" class="form-control" placeholder="Album Name" name="albumId">
 	</div>
 	<div class="input-group col-md-2 col-md-offset-5">
-		<input type="text" class="form-control" placeholder="Filter Name" name="svm">
+		<select name="svm" id="svm" ng-model="chosenSVM">
+			<option ng-repeat="svm in svmNames" value="{{svm}}">{{svm}}</option>
+		</select>
 	</div>
 	<div class="input-group col-md-2 col-md-offset-5">
 		<h4><span class="label">Select files:</span></h4><input type="file" class="form-control" name="image" multiple='multiple'>

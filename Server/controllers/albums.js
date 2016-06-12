@@ -21,6 +21,16 @@ router.get('/getUserAlbums/:user_id', function (req, res) {
     });
 });
 
+router.get('/getSVMs', function (req, res) {
+    var SVMConfig = config.get('PhotoFilter.SVM');
+    var SVMDir = SVMConfig.baseNetworksFolder;
+    var names = fs.readdirSync(SVMDir, 'utf-8');
+    for(var i = 0; i < names.length; i++){
+        names[i] = names[i].split(".json",1)[0];
+    }
+    res.send(names);
+})
+
 router.get('/getAlbum/:album_id', function (req, res) {
     var albumId = req.params.album_id;
     Album.findById(albumId, function (err, albums) {
