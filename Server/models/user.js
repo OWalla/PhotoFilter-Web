@@ -9,6 +9,7 @@ var User = new Schema({
     Email: String,
     StartingNetworkName: String,
     CurrentNetworkData: String,
+    token: String,
 });
 
 module.exports = mongoose.model('User', User);
