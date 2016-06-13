@@ -5,7 +5,10 @@
         $routeProvider
             .when("/main", {
                 templateUrl: "views/main.html",
-                controller: "MainController"
+                controller: "MainController",
+				resolve: {
+                    factory: checkRouting
+                }
             })
             .when("/login", {
                 templateUrl: "views/login.html",
@@ -17,15 +20,24 @@
             })
             .when("/album/:albumId", {
                 templateUrl: "views/album_view.html",
-                controller: "AlbumController"
+                controller: "AlbumController",
+				resolve: {
+                    factory: checkRouting
+                }
             })
             .when("/photo/:photoId", {
                 templateUrl: "views/view_photo.html",
-                controller: "PhotoController"
+                controller: "PhotoController",
+				resolve: {
+                    factory: checkRouting
+                }
             })
             .when("/upload/", {
                 templateUrl: "views/upload_album.html",
-                controller: "UploadController"
+                controller: "UploadController",
+				resolve: {
+                    factory: checkRouting
+                }
             })
             .when("/about/", {
                 templateUrl: "views/about.html"
@@ -53,4 +65,13 @@
         }]);
 
     }]);
+	
+	var checkRouting= function ($q, $localStorage, $location) {
+    if ($localStorage.token) {
+        return true;
+    } else {
+        $location.path("/login");
+        return false;
+    }
+	}
 }());
