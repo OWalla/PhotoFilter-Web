@@ -18,10 +18,15 @@
                 });
             }
         });
+		
+		var currUser = Auth.getCurrentUser();
 
-        $http.get('/getUserAlbums/' + Auth.getCurrentUser()._id).
+		if (currUser)
+		{
+        $http.get('/getUserAlbums/' + currUser._id).
         success(function(data) {
             $scope.albums = data;
         });
+		}
     };
 })();
