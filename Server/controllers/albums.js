@@ -154,7 +154,7 @@ router.post('/upload', uploading.any(), function(req, res) {
 
 
         // Create thumbnails
-        fs.readdir(dir, function(err, files) {
+        /*fs.readdir(dir, function(err, files) {
             if (err) {
                 console.log(err);
             } else {
@@ -169,7 +169,7 @@ router.post('/upload', uploading.any(), function(req, res) {
                     });
                 });
             }
-        });
+        });*/
     })
 });
 

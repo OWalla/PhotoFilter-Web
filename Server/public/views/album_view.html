@@ -11,7 +11,7 @@
             <ul class="albumDNDCategory" dnd-list="list">
                 <li ng-repeat="item in list" class="albumDNDPhoto" dnd-draggable="item" dnd-moved="list.splice($index, 1)" dnd-effect-allowed="move" dnd-selected="models.selected = item" ng-class="{'selected': models.selected === item}">
                     <a ng-href="/uploads/{{item.album}}/{{item.PathImageName}}">
-                        <img ng-src="/uploads/{{item.album}}/{{getThumbnail(item.PathImageName)}}" alt="{{item._id}}" style="height: 40px;"/>
+                        <img ng-src="/uploads/{{item.album}}/{{item.PathImageName}}" alt="{{item._id}}"/>
                     </a>
                 </li>
             </ul>
