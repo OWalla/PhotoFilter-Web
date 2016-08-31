@@ -8,6 +8,9 @@
         "featureServer": {
             "addr": "http://localhost:4555/"
         },
+        "Server": {
+          "addr": "http://localhost:8080/"
+        },
         "upload": {
             "rootFolder": "./public/uploads/",
             "tempFolder": "temp/"

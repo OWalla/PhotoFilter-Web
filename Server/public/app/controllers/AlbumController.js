@@ -3,18 +3,22 @@
 (function() {
     var app = angular.module("MainApp");
 
-    function AlbumController($scope, $http, $routeParams) {
+    function AlbumController($scope, $http, $routeParams, Auth) {
 
         $scope.albumId = $routeParams.albumId;
 
         $scope.sendUpdates = function() {
-            $http.post('/sendUpdates', {
-                albumId: $scope.albumId,
-                classifications: $scope.models.lists
-            }).
-            success(function(data) {
-                alert("Send!");
-            });
+            var currUser = Auth.getCurrentUser();
+
+            if (currUser) {
+                $http.post('/sendUpdates', {
+                    albumId: $scope.albumId,
+                    classifications: $scope.models.lists,
+                    userID: currUser._id
+                }).success(function (data) {
+                    alert("Sent!");
+                });
+            }
         }
 
         $scope.getThumbnail = function(fileName) {
@@ -84,6 +88,6 @@
         });
     }
 
-    app.controller("AlbumController", ["$scope", "$http", '$routeParams', AlbumController]);
+    app.controller("AlbumController", ["$scope", "$http", '$routeParams', "Auth", AlbumController]);
 
 })();

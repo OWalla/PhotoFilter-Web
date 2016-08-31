@@ -197,6 +197,20 @@ router.post('/sendUpdates', function(req, res) {
         updatePhotoUserClassifcation(userClassifications.disliked[i], UserClassification.Disliked.value);
     }
 
+    Album.findById(albumId, function(err, album){
+        var albumName = album["albumName"];
+
+        var userId = req.body.userID;
+        var srvConfig = config.get('PhotoFilter.Server');
+        console.log(srvConfig.addr + "trainSVM?albumName=" + albumName + "&SVMName=" + userId)
+        request(srvConfig.addr + "trainSVM?albumName=" + albumName + "&SVMName=" + userId, function (error, res, body) {
+            if (error || res.statusCode != 200)
+            {
+                console.log(error);
+            }
+        });
+    });
+
     res.json("Cool!");
 });
 
