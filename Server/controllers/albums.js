@@ -23,13 +23,26 @@ router.get('/getUserAlbums/:user_id', auth.ensureAuthorized, function(req, res) 
     });
 });
 
-router.get('/getSVMs', function(req, res) {
+router.get('/getSVMs/:userId', function(req, res) {
     var SVMConfig = config.get('PhotoFilter.SVM');
     var SVMDir = SVMConfig.baseNetworksFolder;
+    var presonalSvmDir = SVMConfig.rootFolder;
+
+    var personalSvm = "";
+    var presonalSVMNames = fs.readdirSync(presonalSvmDir, 'utf-8');
+    for (var i = 0; i < presonalSVMNames.length; i++) {
+        var tempSvmName = presonalSVMNames[i].split(".json", 1)[0];
+        if(tempSvmName == req.params.userId)
+            personalSvm = tempSvmName;
+    }
+
     var names = fs.readdirSync(SVMDir, 'utf-8');
     for (var i = 0; i < names.length; i++) {
         names[i] = names[i].split(".json", 1)[0];
     }
+
+    if(personalSvm != "")
+        names.push(personalSvm);
     res.send(names);
 })
 
@@ -102,6 +115,12 @@ router.post('/upload', uploading.any(), function(req, res) {
 
         var SVMConfig = config.get('PhotoFilter.SVM');
         var SVMDir = SVMConfig.baseNetworksFolder;
+
+        try{
+            fs.accessSync(SVMDir + req.body.svm + ".json", fs.R_OK | fs.W_OK)
+        }catch(e){
+            SVMDir = SVMConfig.rootFolder;
+        }
         var svmString = fs.readFileSync(SVMDir + req.body.svm + ".json", 'utf-8');
         var svmJSON = JSON.parse(svmString);
 

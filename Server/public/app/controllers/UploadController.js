@@ -5,7 +5,7 @@
 
       $scope.user_id = Auth.getCurrentUser()._id;
 
-        $http.get('/getSVMs').success(function (data) {
+        $http.get('/getSVMs/' + $scope.user_id).success(function (data) {
             $scope.svmNames = data;
         });
         $scope.chosenSVM;
